@@ -1,0 +1,2 @@
+# Collision-Risk-Assessment-Tool-for-Mission-Operations
+A conjunction / collision-risk assessment tool for satellite mission operations. Given the state vectors of two space objects, the tool propagates their trajectories over a time window, computes time of closest approach (TCA), miss distance, and probability of collision (Pc), and flags close approaches that would warrant an ops team's attention.
