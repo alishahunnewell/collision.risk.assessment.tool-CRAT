@@ -49,7 +49,7 @@ def test_relative_range_km_matches_direct_norm():
 def test_find_closest_approach_with_two_body_states():
     # A and B share the same circular orbit (radius, speed, plane, direction),
     # with B leading A by a 90 degree phase angle. That's a rigid relative
-    # geometry — the separation is the constant chord length between two
+    # geometry: the separation is the constant chord length between two
     # points 90 degrees apart on the circle, 2*r0*sin(90deg/2), for all time.
     # This is a smoke test that state_fn_from_state interoperates correctly
     # with find_closest_approach, checked against a closed-form distance.

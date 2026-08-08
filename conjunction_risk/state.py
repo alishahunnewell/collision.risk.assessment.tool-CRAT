@@ -11,7 +11,7 @@ class StateVector:
 
     r_km and v_km_s are expressed in the frame named by `frame` (ECI by default,
     meaning Earth-Centered Inertial). epoch_s is seconds since an arbitrary but
-    shared reference epoch — callers are responsible for keeping epochs of
+    shared reference epoch. Callers are responsible for keeping epochs of
     different StateVectors consistent with each other.
     """
 

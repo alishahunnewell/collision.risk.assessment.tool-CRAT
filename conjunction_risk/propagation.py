@@ -1,7 +1,7 @@
 """Two-body (Keplerian) orbit propagation via the universal variable formulation.
 
-This solves Kepler's problem — given a state vector (r0_vec, v0_vec) at some
-epoch, find the state vector after a time step dt — for any conic (circular,
+This solves Kepler's problem: given a state vector (r0_vec, v0_vec) at some
+epoch, find the state vector after a time step dt, for any conic (circular,
 elliptical, parabolic, or hyperbolic) using a single universal anomaly chi,
 following the classic Newton iteration on Stumpff functions C(z) and S(z)
 (see Curtis, "Orbital Mechanics for Engineering Students", Algorithms 3.3/3.4;

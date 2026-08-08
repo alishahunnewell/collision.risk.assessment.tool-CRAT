@@ -1,7 +1,7 @@
 """Phase 1 demo: miss distance vs. time and time of closest approach (TCA).
 
 Sets up two objects in circular orbits of the same radius and period but with
-a small relative inclination and phase offset — the kind of near-coplanar,
+a small relative inclination and phase offset, the kind of near-coplanar,
 near-resonant geometry that produces a genuine close approach at the node
 crossing rather than a distant flyby. Propagates both with the two-body
 propagator, samples relative range over one orbital period, and reports/plots
