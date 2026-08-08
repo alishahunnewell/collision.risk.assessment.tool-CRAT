@@ -30,6 +30,12 @@ Run the Phase 2 example, which screens a small catalog of secondary objects agai
 python examples/screening_demo.py
 ```
 
+Run the near-Earth object (NEO) example, which applies the same propagation and closest-approach code to a heliocentric Earth/asteroid encounter instead of a satellite pair:
+
+```bash
+python examples/neo_close_approach.py
+```
+
 Run the test suite:
 
 ```bash
