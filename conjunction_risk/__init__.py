@@ -7,6 +7,7 @@ from .geometry import (
     sample_range_history,
     find_closest_approach,
 )
+from .screening import ScreeningResult, screen_conjunctions, filter_by_threshold
 
 __all__ = [
     "MU_EARTH_KM3_S2",
@@ -20,4 +21,7 @@ __all__ = [
     "relative_range_km",
     "sample_range_history",
     "find_closest_approach",
+    "ScreeningResult",
+    "screen_conjunctions",
+    "filter_by_threshold",
 ]
