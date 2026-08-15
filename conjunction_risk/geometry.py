@@ -49,8 +49,12 @@ def find_closest_approach(state_fn_a, state_fn_b, t_start_s, t_end_s, coarse_ste
     then refines with a bounded 1D minimizer. Relative velocity at TCA is read
     directly off the propagated states, not finite-differenced.
 
-    Returns a dict with tca_s, miss_distance_km, relative_speed_km_s, and the
-    coarse (times_s, ranges_km) sample used for bracketing/plotting.
+    Returns a dict with tca_s, miss_distance_km, relative_speed_km_s,
+    r_rel_km, v_rel_km_s, and the coarse (times_s, ranges_km) sample used
+    for bracketing/plotting. r_rel_km and v_rel_km_s (object A minus object
+    B, at TCA) are exposed for downstream use such as probability-of-collision
+    encounter-plane construction (see conjunction_risk/probability.py); by
+    definition of TCA they are perpendicular (d|r_rel|/dt = 0 there).
     """
     coarse_times_s, coarse_ranges_km = sample_range_history(
         state_fn_a, state_fn_b, t_start_s, t_end_s, coarse_step_s
@@ -71,12 +75,16 @@ def find_closest_approach(state_fn_a, state_fn_b, t_start_s, t_end_s, coarse_ste
 
     r_a, v_a = state_fn_a(tca_s)
     r_b, v_b = state_fn_b(tca_s)
-    relative_speed_km_s = float(np.linalg.norm(v_a - v_b))
+    r_rel_km = r_a - r_b
+    v_rel_km_s = v_a - v_b
+    relative_speed_km_s = float(np.linalg.norm(v_rel_km_s))
 
     return {
         "tca_s": tca_s,
         "miss_distance_km": miss_distance_km,
         "relative_speed_km_s": relative_speed_km_s,
+        "r_rel_km": r_rel_km,
+        "v_rel_km_s": v_rel_km_s,
         "coarse_times_s": coarse_times_s,
         "coarse_ranges_km": coarse_ranges_km,
     }

@@ -1,12 +1,12 @@
 # Collision Risk Assessment Tool
 
-A close-approach / collision-risk assessment toolkit for orbital objects. Given the state vectors of two bodies (two satellites, a satellite and a piece of debris, or a satellite/Earth and a near-Earth asteroid), the tool propagates their trajectories over a time window, computes time of closest approach (TCA), miss distance, and (eventually) probability of collision (Pc), and flags close approaches worth a closer look.
+A close-approach / collision-risk assessment toolkit for orbital objects. Given the state vectors of two bodies (two satellites, a satellite and a piece of debris, or a satellite/Earth and a near-Earth asteroid), the tool propagates their trajectories over a time window, computes time of closest approach (TCA), miss distance, and probability of collision (Pc), and flags close approaches worth a closer look.
 
 The same core propagation and closest-approach geometry applies across two related domains: satellite conjunction assessment for mission operations, and near-Earth object close-approach screening for planetary defense.
 
 ## Status
 
-**Phases 1-2 are done.** Two-body propagation, time-of-closest-approach finding, miss-distance-vs-time analysis, and multi-object screening (ranking a catalog of secondaries by miss distance) are implemented and tested. Phases 3-4 (probability of collision, maneuver recommendations) are not yet built, see [Roadmap](#roadmap).
+**Phases 1-3 are done.** Two-body propagation, time-of-closest-approach finding, miss-distance-vs-time analysis, multi-object screening (ranking a catalog of secondaries by miss distance), and probability of collision (via the 2D encounter-plane method) are implemented and tested. Phase 4 (maneuver recommendations) is not yet built, see [Roadmap](#roadmap).
 
 ## Installation
 
@@ -36,6 +36,12 @@ Run the near-Earth object (NEO) example, which applies the same propagation and 
 python examples/neo_close_approach.py
 ```
 
+Run the Phase 3 example, which attaches position covariances and a hard-body radius to a close approach and computes probability of collision (Pc):
+
+```bash
+python examples/probability_demo.py
+```
+
 Run the test suite:
 
 ```bash
@@ -48,6 +54,7 @@ pytest
 - [`conjunction_risk/propagation.py`](conjunction_risk/propagation.py): two-body (Keplerian) propagation via the universal-variable formulation, valid for circular, elliptical, parabolic, and hyperbolic orbits.
 - [`conjunction_risk/geometry.py`](conjunction_risk/geometry.py): samples relative range over a time window and refines to find time of closest approach (TCA), miss distance, and relative speed at TCA.
 - [`conjunction_risk/screening.py`](conjunction_risk/screening.py): runs closest-approach finding across a catalog of secondary objects, ranks by miss distance, and flags the ones inside a threshold.
+- [`conjunction_risk/probability.py`](conjunction_risk/probability.py): projects each object's position covariance onto the encounter plane at TCA and integrates the combined 2D Gaussian over a disk of radius equal to the combined hard-body radius to get Pc.
 
 The geometry module works against a `state_fn(t) -> (r_vec, v_vec)` interface rather than directly against the two-body propagator, so the same TCA-finding logic can be reused later with other propagation sources (e.g. SGP4 for TLE-based objects) without changes.
 
@@ -55,5 +62,5 @@ The geometry module works against a `state_fn(t) -> (r_vec, v_vec)` interface ra
 
 1. **Phase 1, Geometry only** *(done)*: propagate two objects, compute miss distance vs. time, find TCA.
 2. **Phase 2, Screening** *(done)*: given a primary object and a list of secondary objects (debris/TLE catalog, or a set of NEO orbital elements), rank by miss distance to find genuine close-approach events.
-3. **Phase 3, Probability of collision**: add covariance handling and compute Pc via a standard 2D encounter-plane method.
+3. **Phase 3, Probability of collision** *(done)*: covariance handling and Pc via a standard 2D encounter-plane method.
 4. **Phase 4 (stretch)**: given a Pc threshold breach, propose a small delta-v maneuver and show before/after risk (satellite-specific).
