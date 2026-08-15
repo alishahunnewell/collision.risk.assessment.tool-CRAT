@@ -14,6 +14,12 @@ from .probability import (
     probability_of_collision,
     probability_of_collision_at_tca,
 )
+from .maneuver import (
+    along_track_unit_vector,
+    apply_delta_v,
+    evaluate_conjunction,
+    recommend_along_track_delta_v,
+)
 
 __all__ = [
     "MU_EARTH_KM3_S2",
@@ -36,4 +42,8 @@ __all__ = [
     "project_covariance_to_encounter_plane",
     "probability_of_collision",
     "probability_of_collision_at_tca",
+    "along_track_unit_vector",
+    "apply_delta_v",
+    "evaluate_conjunction",
+    "recommend_along_track_delta_v",
 ]

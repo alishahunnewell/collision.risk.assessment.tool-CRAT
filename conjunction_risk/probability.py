@@ -2,14 +2,19 @@
 
 At the time of closest approach (TCA), the relative position and velocity
 vectors are perpendicular (that's the defining condition of a closest
-approach: d|r_rel|/dt = 0 there). So the relative position vector already
-lies in the plane perpendicular to the relative velocity, called the
-encounter plane or B-plane. Projecting each object's position covariance
-onto this plane and summing them gives a 2D Gaussian describing the combined
-position uncertainty at TCA; Pc is the probability mass of that Gaussian
-that falls within a disk of radius equal to the combined hard-body radius
-(HBR, the sum of the two objects' physical radii), centered on the
-(projected) miss vector.
+approach: d|r_rel|/dt = 0 there). The encounter plane, or B-plane, is the
+plane perpendicular to the relative velocity; at exact TCA the relative
+position vector already lies in it. Away from exact TCA (e.g. when
+evaluating a candidate maneuver at a fixed reference time rather than
+re-solving for a new TCA, see conjunction_risk/maneuver.py), only the
+component of the relative position perpendicular to the relative velocity
+belongs in the encounter plane, so encounter_plane_basis projects it out
+rather than assuming r_rel_km is already in-plane. Projecting each object's
+position covariance onto this plane and summing them gives a 2D Gaussian
+describing the combined position uncertainty; Pc is the probability mass of
+that Gaussian that falls within a disk of radius equal to the combined
+hard-body radius (HBR, the sum of the two objects' physical radii), centered
+on the (projected) miss vector.
 
 This follows the standard formulation used in satellite conjunction
 assessment (Foster 1992; Akella & Alfriend 1998) and, via the shared
@@ -27,17 +32,20 @@ from scipy.integrate import dblquad
 
 
 def encounter_plane_basis(r_rel_km, v_rel_km_s):
-    """Right-handed basis (x_hat, y_hat, z_hat) for the encounter plane at TCA.
+    """Right-handed basis (x_hat, y_hat, z_hat) for the encounter plane.
 
-    x_hat points along the relative position vector (the miss vector).
     z_hat points along the relative velocity vector (normal to the encounter
-    plane). y_hat completes the right-handed set, in-plane.
+    plane). x_hat is the direction of the component of r_rel_km perpendicular
+    to v_rel_km_s (this is r_rel_km's own direction when the two are already
+    exactly perpendicular, i.e. at exact TCA). y_hat completes the
+    right-handed set, in-plane.
     """
     r_rel_km = np.asarray(r_rel_km, dtype=float)
     v_rel_km_s = np.asarray(v_rel_km_s, dtype=float)
 
-    x_hat = r_rel_km / np.linalg.norm(r_rel_km)
     z_hat = v_rel_km_s / np.linalg.norm(v_rel_km_s)
+    r_perp_km = r_rel_km - np.dot(r_rel_km, z_hat) * z_hat
+    x_hat = r_perp_km / np.linalg.norm(r_perp_km)
     y_hat = np.cross(z_hat, x_hat)
 
     return x_hat, y_hat, z_hat
@@ -74,9 +82,12 @@ def probability_of_collision(r_rel_km, v_rel_km_s, cov_a_km2, cov_b_km2, hbr_km)
         cov_a_km2, x_hat, y_hat
     ) + project_covariance_to_encounter_plane(cov_b_km2, x_hat, y_hat)
 
-    # The miss vector lies along x_hat by construction, so in encounter-plane
-    # coordinates it is (miss_distance_km, 0).
-    miss_distance_km = np.linalg.norm(r_rel_km)
+    # The perpendicular component of r_rel_km lies along x_hat by
+    # construction, and r_rel_km has no component along y_hat (both x_hat and
+    # y_hat are, by construction, perpendicular to z_hat, the direction of
+    # r_rel_km's remaining component), so in encounter-plane coordinates the
+    # miss vector is exactly (miss_distance_km, 0).
+    miss_distance_km = float(np.dot(r_rel_km, x_hat))
     mean = np.array([miss_distance_km, 0.0])
 
     inv_cov = np.linalg.inv(cov_2d)
